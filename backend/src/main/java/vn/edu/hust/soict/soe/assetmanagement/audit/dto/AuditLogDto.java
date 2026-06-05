@@ -1,21 +1,16 @@
 package vn.edu.hust.soict.soe.assetmanagement.audit.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import vn.edu.hust.soict.soe.assetmanagement.audit.entity.AuditLog;
-
+import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-/**
- * ==============================================================================
- * DTO: AuditLogDto
- * PURPOSE: Secure payload object to send audit trail data to the frontend.
- * RULE COMPLIANCE: Adheres to the "Never expose JPA entity objects directly" rule.
- * ==============================================================================
- */
 @Getter
 @Builder
+@NoArgsConstructor 
+@AllArgsConstructor
 public class AuditLogDto {
     private UUID id;
     private String module;

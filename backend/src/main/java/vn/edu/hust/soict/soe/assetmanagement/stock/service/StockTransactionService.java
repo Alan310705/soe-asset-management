@@ -14,7 +14,7 @@ import vn.edu.hust.soict.soe.assetmanagement.stock.dto.StockTransactionDto;
 import vn.edu.hust.soict.soe.assetmanagement.stock.entity.Material;
 import vn.edu.hust.soict.soe.assetmanagement.stock.entity.StorageLocation;
 import vn.edu.hust.soict.soe.assetmanagement.stock.entity.StockTransaction;
-import vn.edu.hust.soict.soe.assetmanagement.stock.entity.TransactionType;
+import vn.edu.hust.soict.soe.assetmanagement.stock.enums.TransactionType;
 import vn.edu.hust.soict.soe.assetmanagement.stock.repository.MaterialRepository;
 import vn.edu.hust.soict.soe.assetmanagement.stock.repository.StorageLocationRepository;
 import vn.edu.hust.soict.soe.assetmanagement.stock.repository.StockTransactionRepository;

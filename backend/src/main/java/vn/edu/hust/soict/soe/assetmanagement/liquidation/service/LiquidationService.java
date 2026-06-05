@@ -14,7 +14,7 @@ import vn.edu.hust.soict.soe.assetmanagement.exception.ResourceNotFoundException
 import vn.edu.hust.soict.soe.assetmanagement.liquidation.dto.CreateLiquidationRequest;
 import vn.edu.hust.soict.soe.assetmanagement.liquidation.dto.LiquidationDto;
 import vn.edu.hust.soict.soe.assetmanagement.liquidation.entity.LiquidationRequest;
-import vn.edu.hust.soict.soe.assetmanagement.liquidation.entity.LiquidationStatus;
+import vn.edu.hust.soict.soe.assetmanagement.liquidation.enums.LiquidationStatus;
 import vn.edu.hust.soict.soe.assetmanagement.liquidation.repository.LiquidationRepository;
 
 import java.math.BigDecimal;

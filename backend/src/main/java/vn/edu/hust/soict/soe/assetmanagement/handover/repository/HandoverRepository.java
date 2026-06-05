@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import vn.edu.hust.soict.soe.assetmanagement.handover.entity.HandoverRequest;
-import vn.edu.hust.soict.soe.assetmanagement.handover.entity.HandoverStatus;
+import vn.edu.hust.soict.soe.assetmanagement.handover.enums.HandoverStatus;
 
 import java.util.List;
 import java.util.Optional;

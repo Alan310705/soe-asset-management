@@ -2,7 +2,9 @@ package vn.edu.hust.soict.soe.assetmanagement.handover.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+
 import vn.edu.hust.soict.soe.assetmanagement.common.BaseEntity;
+import vn.edu.hust.soict.soe.assetmanagement.handover.enums.HandoverStatus;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

@@ -10,7 +10,7 @@ import vn.edu.hust.soict.soe.assetmanagement.stock.dto.IssueRequest;
 import vn.edu.hust.soict.soe.assetmanagement.stock.dto.ReceiptRequest;
 import vn.edu.hust.soict.soe.assetmanagement.stock.entity.StorageLocation;
 import vn.edu.hust.soict.soe.assetmanagement.stock.entity.MaterialCategory;
-import vn.edu.hust.soict.soe.assetmanagement.stock.entity.TransactionType;
+import vn.edu.hust.soict.soe.assetmanagement.stock.enums.TransactionType;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

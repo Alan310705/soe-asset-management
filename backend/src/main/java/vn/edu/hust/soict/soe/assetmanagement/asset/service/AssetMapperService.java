@@ -6,9 +6,9 @@ import vn.edu.hust.soict.soe.assetmanagement.asset.dto.FixedAssetDTO;
 import vn.edu.hust.soict.soe.assetmanagement.asset.dto.AssetHistoryDTO;
 import vn.edu.hust.soict.soe.assetmanagement.asset.entity.AssetHistory;
 import vn.edu.hust.soict.soe.assetmanagement.asset.entity.FixedAsset;
-import vn.edu.hust.soict.soe.assetmanagement.lookup.service.LookupService;
 import vn.edu.hust.soict.soe.assetmanagement.asset.enums.AssetStatus;
-//import vn.edu.hust.soict.soe.assetmanagement.asset.enums.DepreciationMethod;
+import vn.edu.hust.soict.soe.assetmanagement.lookup.service.LookupService;
+
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

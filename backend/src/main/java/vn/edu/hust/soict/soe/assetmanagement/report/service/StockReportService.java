@@ -8,7 +8,7 @@ import vn.edu.hust.soict.soe.assetmanagement.audit.service.AuditLogService;
 import vn.edu.hust.soict.soe.assetmanagement.report.dto.StockReportDto;
 import vn.edu.hust.soict.soe.assetmanagement.stock.entity.Material;
 import vn.edu.hust.soict.soe.assetmanagement.stock.entity.StockTransaction;
-import vn.edu.hust.soict.soe.assetmanagement.stock.entity.TransactionType;
+import vn.edu.hust.soict.soe.assetmanagement.stock.enums.TransactionType;
 import vn.edu.hust.soict.soe.assetmanagement.stock.repository.MaterialRepository;
 import vn.edu.hust.soict.soe.assetmanagement.stock.repository.StockTransactionRepository;
 

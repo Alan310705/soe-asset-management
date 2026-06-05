@@ -1,7 +1,7 @@
 package vn.edu.hust.soict.soe.assetmanagement.stock.dto;
 
 import lombok.*;
-import vn.edu.hust.soict.soe.assetmanagement.stock.entity.TransactionType;
+import vn.edu.hust.soict.soe.assetmanagement.stock.enums.TransactionType;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
-import vn.edu.hust.soict.soe.assetmanagement.liquidation.entity.LiquidationStatus;
+import vn.edu.hust.soict.soe.assetmanagement.liquidation.enums.LiquidationStatus;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

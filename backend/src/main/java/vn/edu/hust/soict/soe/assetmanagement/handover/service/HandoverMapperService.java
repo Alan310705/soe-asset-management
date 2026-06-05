@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service;
 import vn.edu.hust.soict.soe.assetmanagement.handover.dto.HandoverDto;
 import vn.edu.hust.soict.soe.assetmanagement.handover.entity.HandoverRequest;
 import vn.edu.hust.soict.soe.assetmanagement.handover.dto.CreateHandoverRequest;
-import vn.edu.hust.soict.soe.assetmanagement.handover.entity.HandoverStatus;
+import vn.edu.hust.soict.soe.assetmanagement.handover.enums.HandoverStatus;
 
 /**
  * ==============================================================================

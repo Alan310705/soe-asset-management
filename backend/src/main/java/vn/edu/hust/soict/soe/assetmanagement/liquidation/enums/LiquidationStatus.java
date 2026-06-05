@@ -1,4 +1,4 @@
-package vn.edu.hust.soict.soe.assetmanagement.liquidation.entity;
+package vn.edu.hust.soict.soe.assetmanagement.liquidation.enums;
 
 /**
  * ==============================================================================

@@ -14,7 +14,7 @@ import vn.edu.hust.soict.soe.assetmanagement.exception.ResourceNotFoundException
 import vn.edu.hust.soict.soe.assetmanagement.handover.dto.CreateHandoverRequest;
 import vn.edu.hust.soict.soe.assetmanagement.handover.dto.HandoverDto;
 import vn.edu.hust.soict.soe.assetmanagement.handover.entity.HandoverRequest;
-import vn.edu.hust.soict.soe.assetmanagement.handover.entity.HandoverStatus;
+import vn.edu.hust.soict.soe.assetmanagement.handover.enums.HandoverStatus;
 import vn.edu.hust.soict.soe.assetmanagement.handover.repository.HandoverRepository;
 
 import java.time.LocalDateTime;

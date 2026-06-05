@@ -2,7 +2,9 @@ package vn.edu.hust.soict.soe.assetmanagement.liquidation.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+
 import vn.edu.hust.soict.soe.assetmanagement.common.BaseEntity;
+import vn.edu.hust.soict.soe.assetmanagement.liquidation.enums.LiquidationStatus;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

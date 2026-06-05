@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
-import vn.edu.hust.soict.soe.assetmanagement.handover.entity.HandoverStatus;
+import vn.edu.hust.soict.soe.assetmanagement.handover.enums.HandoverStatus;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service;
 import vn.edu.hust.soict.soe.assetmanagement.liquidation.dto.CreateLiquidationRequest;
 import vn.edu.hust.soict.soe.assetmanagement.liquidation.dto.LiquidationDto;
 import vn.edu.hust.soict.soe.assetmanagement.liquidation.entity.LiquidationRequest;
-import vn.edu.hust.soict.soe.assetmanagement.liquidation.entity.LiquidationStatus;
+import vn.edu.hust.soict.soe.assetmanagement.liquidation.enums.LiquidationStatus;
 
 /**
  * ==============================================================================

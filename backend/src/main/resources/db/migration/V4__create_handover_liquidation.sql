@@ -122,14 +122,3 @@ CREATE INDEX idx_liquidation_code   ON liquidation_requests(request_code);
 CREATE INDEX idx_liquidation_asset  ON liquidation_requests(asset_id);
 CREATE INDEX idx_liquidation_status ON liquidation_requests(status);
 CREATE INDEX idx_liquidation_unit   ON liquidation_requests(requesting_unit_id);
-
--- Note for Linh:
--- When a liquidation is COMPLETED:
---   1. Update assets SET status = 'LIQUIDATED', status_changed_at = NOW()
---   2. Write a row to asset_history with event_type = 'LIQUIDATED'
---   3. Write a row to audit_log (V5)
--- This ensures HL-03 (post-liquidation asset closure) is enforced.
---
--- Separation of duties rule:
---   initiated_by != dept_approved_by (enforced in HandoverService.java)
---   initiated_by != manager_approved_by (enforced in LiquidationService.java)

@@ -1,4 +1,4 @@
-package vn.edu.hust.soict.soe.assetmanagement.handover.entity;
+package vn.edu.hust.soict.soe.assetmanagement.handover.enums;
 
 /**
  * ==============================================================================
