@@ -25,6 +25,10 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * REST API for fixed assets (FA-01 to FA-04).
+ * Thin controller: validates HTTP input, checks roles, delegates to {@link FixedAssetService}.
+ */
 @RestController
 @RequestMapping("/api/assets")
 @RequiredArgsConstructor
@@ -60,7 +64,7 @@ public class FixedAssetController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('SYSTEM_ADMIN', 'ASSET_MANAGER')")
+    @PreAuthorize("hasRole('ASSET_MANAGER')")
     @Operation(summary = "Tạo mới hồ sơ tài sản")
     public ResponseEntity<ApiResponse<FixedAssetDTO>> createAsset(
             @Valid @RequestBody FixedAssetDTO dto,

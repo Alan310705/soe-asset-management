@@ -8,6 +8,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Database access for organizational units ({@code managing_units} table).
+ * Used for asset ownership, handover parties, and lookup dropdowns.
+ */
 @Repository
 public interface ManagingUnitRepository extends JpaRepository<ManagingUnit, UUID> {
     Optional<ManagingUnit> findByCode(String code);

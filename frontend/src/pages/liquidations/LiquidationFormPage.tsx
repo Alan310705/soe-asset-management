@@ -15,7 +15,10 @@ export default function LiquidationFormPage() {
 
   useEffect(() => {
     lookupApi.managingUnits().then(setUnits);
-    assetApi.list({ page: 0, size: 100 }).then(r => setAssets(r.content));
+    assetApi.list({ page: 0, size: 100 }).then(r => {
+      const activeAssets = r.content.filter(a => a.status !== 'LIQUIDATED');
+      setAssets(activeAssets);
+    });
   }, []);
 
   return (

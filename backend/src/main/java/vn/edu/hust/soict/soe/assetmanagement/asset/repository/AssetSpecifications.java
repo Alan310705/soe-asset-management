@@ -10,6 +10,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Builds dynamic JPA {@link Specification} filters for asset search and reports.
+ * Combines optional filters (status, category, unit, date range, keyword).
+ */
 public final class AssetSpecifications {
 
     private AssetSpecifications() {}

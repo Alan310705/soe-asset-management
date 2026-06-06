@@ -16,6 +16,7 @@ export interface Liquidation {
   status: LiquidationStatus;
   initiatedBy: string;
   finalDisposalValue?: number;
+  documentRef?: string;
 }
 
 export const liquidationApi = {
@@ -37,4 +38,7 @@ export const liquidationApi = {
     axiosInstance.put(`/liquidations/${id}/complete`, null, { params: { finalDisposalValue } }).then(r => r.data),
   reject: (id: string, reason: string) =>
     axiosInstance.put(`/liquidations/${id}/reject`, null, { params: { reason } }).then(r => r.data),
+
+  downloadDocument: (id: string) =>
+    axiosInstance.get(`/liquidations/${id}/document`, { responseType: 'blob' }).then(r => r.data as Blob),
 };

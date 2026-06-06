@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vn.edu.hust.soict.soe.assetmanagement.asset.enums.AssetStatus;
+import vn.edu.hust.soict.soe.assetmanagement.asset.repository.FixedAssetRepository;
 import vn.edu.hust.soict.soe.assetmanagement.asset.service.FixedAssetService;
 import vn.edu.hust.soict.soe.assetmanagement.audit.service.AuditLogService;
 import vn.edu.hust.soict.soe.assetmanagement.exception.BusinessRuleException;
@@ -87,8 +88,10 @@ import java.util.UUID;
 public class LiquidationService {
 
     private final LiquidationRepository liquidationRepository;
+    private final FixedAssetRepository fixedAssetRepository;
     private final FixedAssetService fixedAssetService;   // Cross-module: set asset to LIQUIDATED
     private final AuditLogService auditLogService;        // Cross-module: write audit log
+    private final LiquidationDocumentService liquidationDocumentService; // HL-03: official PDF document
     private final LiquidationMapperService liquidationMapperService; // Map between Entity and DTO
 
     /**
@@ -154,6 +157,15 @@ public class LiquidationService {
      */
     public LiquidationDto createLiquidation(CreateLiquidationRequest request,
                                              String initiatedBy) {
+
+        // ── Check if asset is already liquidated (BR-05) ─────────────────
+        var asset = fixedAssetRepository.findById(request.getAssetId())
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Không tìm thấy tài sản với ID: " + request.getAssetId()));
+        if (asset.getStatus() == AssetStatus.LIQUIDATED) {
+            throw new BusinessRuleException(
+                    "Tài sản này đã bị thanh lý rồi. Không thể tạo yêu cầu thanh lý mới.");
+        }
 
         // ── Block duplicate active requests for the same asset ────────────
         if (liquidationRepository.hasActiveRequestForAsset(
@@ -406,14 +418,12 @@ public class LiquidationService {
         // It may differ from currentMarketValue (the estimate at request time).
         request.setFinalDisposalValue(finalDisposalValue);
 
-        // ── Generate document reference (HL-03) ───────────────────────────
-        // Convert "TL-2025-0001" → "BBTL-2025-0001" (Biên Bản Thanh Lý)
-        // In production this would render a Thymeleaf template and generate a PDF.
-        String documentRef = request.getRequestCode().replace("TL-", "BBTL-");
+        // ── HL-03: Generate the formal liquidation document reference ─────
+        String documentRef = liquidationDocumentService.generateDocument(request);
         request.setDocumentRef(documentRef);
         request.setDocumentGeneratedAt(LocalDateTime.now());
 
-        log.info("Generating liquidation document {} for request {}",
+        log.info("Liquidation document {} assigned for request {}",
                 documentRef, request.getRequestCode());
 
         // ── Transition: APPROVED → COMPLETED ─────────────────────────────
@@ -611,10 +621,6 @@ public class LiquidationService {
             throw new BusinessRuleException(
                     "Chỉ có thể tải tài liệu khi thanh lý đã hoàn thành.");
         }
-        // TODO: Implement actual PDF generation with iText7 or OpenHTMLtoPDF
-        // For now, return a placeholder message
-        String message = "Biên bản thanh lý: " + request.getRequestCode() +
-                " - Tài sản: " + request.getAssetId();
-        return message.getBytes();
+        return liquidationDocumentService.generatePdf(request);
     }
 }

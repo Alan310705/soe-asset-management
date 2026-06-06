@@ -7,6 +7,10 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+/**
+ * API response shape for audit log search (RP-03).
+ * Excludes internal fields such as {@code userId} from the entity.
+ */
 @Getter
 @Builder
 @NoArgsConstructor 

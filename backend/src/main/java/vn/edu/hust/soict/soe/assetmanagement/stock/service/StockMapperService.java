@@ -15,6 +15,9 @@ import vn.edu.hust.soict.soe.assetmanagement.stock.enums.TransactionType;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+/**
+ * Converts stock entities and request DTOs (receipt/issue/material) for the stock API layer.
+ */
 @Service
 public class StockMapperService {
 

@@ -12,6 +12,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Database access for {@link Material} master data and search queries.
+ */
 @Repository
 public interface MaterialRepository extends JpaRepository<Material, UUID> {
 

@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vn.edu.hust.soict.soe.assetmanagement.asset.enums.AssetStatus;
+import vn.edu.hust.soict.soe.assetmanagement.asset.repository.FixedAssetRepository;
 import vn.edu.hust.soict.soe.assetmanagement.asset.service.FixedAssetService;
 import vn.edu.hust.soict.soe.assetmanagement.audit.service.AuditLogService;
 import vn.edu.hust.soict.soe.assetmanagement.exception.BusinessRuleException;
@@ -79,6 +80,7 @@ import java.util.UUID;
 public class HandoverService {
 
     private final HandoverRepository handoverRepository;
+    private final FixedAssetRepository fixedAssetRepository;
     private final FixedAssetService fixedAssetService;      // Cross-module: update asset status/unit
     private final AuditLogService auditLogService;           // Cross-module: write audit log
     private final HandoverDocumentService handoverDocumentService; // HL-03: generate document
@@ -133,15 +135,10 @@ public class HandoverService {
      * Used by POST /api/handovers.
      *
      * VALIDATION STEPS (in order):
-     *   1. from_unit_id != to_unit_id  (Rule 3)
-     *   2. No active request already exists for this asset  (Rule 2)
-     *   3. The referenced asset exists (delegates to FixedAssetService — will throw
-     *      ResourceNotFoundException if not found when approve() calls updateAsset)
-     *
-     * NOTE: We do NOT validate that fromUnitId matches the asset's current
-     * managing unit here — that would create a tight coupling. The approver
-     * is expected to verify this during the approval step. If needed, this
-     * check can be added by calling fixedAssetService.getAssetById().
+     *   1. Asset exists and is not liquidated
+     *   2. fromUnitId matches asset's current managing unit
+     *   3. from_unit_id != to_unit_id  (Rule 3)
+     *   4. No active request already exists for this asset  (Rule 2)
      *
      * @param request    The validated DTO from the request body.
      * @param initiatedBy The username extracted from the JWT token (never from the body).
@@ -149,6 +146,22 @@ public class HandoverService {
      * @throws BusinessRuleException if any validation rule is violated.
      */
     public HandoverDto createHandover(CreateHandoverRequest request, String initiatedBy) {
+
+        // ── Check if asset is already liquidated ───────────────────────────
+        var asset = fixedAssetRepository.findById(request.getAssetId())
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Không tìm thấy tài sản với ID: " + request.getAssetId()));
+        if (asset.getStatus() == AssetStatus.LIQUIDATED) {
+            throw new BusinessRuleException(
+                    "Tài sản này đã bị thanh lý rồi. Không thể tạo yêu cầu bàn giao cho tài sản đã thanh lý.");
+        }
+
+        // ── Validate fromUnitId matches asset's current managing unit ──────
+        if (!asset.getManagingUnitId().equals(request.getFromUnitId())) {
+            throw new BusinessRuleException(
+                    "Đơn vị bàn giao phải là đơn vị sử dụng hiện tại của tài sản. " +
+                    "Vui lòng chọn lại tài sản hoặc đơn vị.");
+        }
 
         // ── Rule 3: Sender and receiver must be different units ───────────
         if (request.getFromUnitId().equals(request.getToUnitId())) {
@@ -302,14 +315,18 @@ public class HandoverService {
      * Transitions: APPROVED → CONFIRMED.
      * Used by PUT /api/handovers/{id}/confirm.
      *
-     * In a real-world state SOE context this step represents the receiving unit
+     * In a real-world SOE context this step represents the receiving unit
      * representative signing off that the asset physically arrived.
+     *
+     * SEPARATION OF DUTIES:
+     *   The confirmer must not be the same person who initiated the request.
      *
      * @param id                UUID of the handover request.
      * @param confirmationNotes Optional notes from the receiving party.
      * @param confirmedBy       Username of the receiving-unit representative (from JWT).
      * @return Updated HandoverDto in CONFIRMED status.
-     * @throws BusinessRuleException     if the request is not in APPROVED status.
+     * @throws BusinessRuleException     if the request is not in APPROVED status
+     *                                   or if confirmedBy equals initiatedBy.
      * @throws ResourceNotFoundException if the request does not exist.
      */
     public HandoverDto confirmHandover(UUID id, String confirmationNotes, String confirmedBy) {
@@ -318,6 +335,13 @@ public class HandoverService {
         // ── Validate current state ────────────────────────────────────────
         requireStatus(request, HandoverStatus.APPROVED,
                 "Chỉ có thể xác nhận bàn giao khi yêu cầu đã được phê duyệt (APPROVED).");
+
+        // ── Separation of duties: Cannot confirm if you initiated the request ──
+        if (confirmedBy.equals(request.getInitiatedBy())) {
+            throw new BusinessRuleException(
+                    "Người xác nhận bàn giao không được là người tạo yêu cầu. " +
+                    "Vui lòng để người khác xác nhận.");
+        }
 
         // ── Transition ────────────────────────────────────────────────────
         String oldStatus = request.getStatus().name();
@@ -355,10 +379,14 @@ public class HandoverService {
      * This step also triggers document generation via HandoverDocumentService (HL-03).
      * After completion, the request is permanently closed — no further transitions.
      *
+     * SEPARATION OF DUTIES:
+     *   The person completing the handover must not be the same person who initiated it.
+     *
      * @param id          UUID of the handover request.
      * @param completedBy Username of the person finalizing the record (from JWT).
      * @return Updated HandoverDto in COMPLETED status.
-     * @throws BusinessRuleException     if the request is not in CONFIRMED status.
+     * @throws BusinessRuleException     if the request is not in CONFIRMED status
+     *                                   or if completedBy equals initiatedBy.
      * @throws ResourceNotFoundException if the request does not exist.
      */
     public HandoverDto completeHandover(UUID id, String completedBy) {
@@ -367,6 +395,13 @@ public class HandoverService {
         // ── Validate current state ────────────────────────────────────────
         requireStatus(request, HandoverStatus.CONFIRMED,
                 "Chỉ có thể hoàn tất khi yêu cầu đã được xác nhận (CONFIRMED).");
+
+        // ── Separation of duties: Cannot complete if you initiated the request ──
+        if (completedBy.equals(request.getInitiatedBy())) {
+            throw new BusinessRuleException(
+                    "Người hoàn tất bàn giao không được là người tạo yêu cầu. " +
+                    "Vui lòng để người khác hoàn tất.");
+        }
 
         // ── HL-03: Generate the formal handover document ──────────────────
         // HandoverDocumentService generates the "Biên bản bàn giao" and returns

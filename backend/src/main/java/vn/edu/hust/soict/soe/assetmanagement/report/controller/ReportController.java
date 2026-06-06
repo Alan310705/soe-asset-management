@@ -24,6 +24,10 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * REST API for finance reports and file exports (RP-02).
+ * Restricted to FINANCE_AUDIT and related roles.
+ */
 @RestController
 @RequestMapping("/api/reports")
 @RequiredArgsConstructor

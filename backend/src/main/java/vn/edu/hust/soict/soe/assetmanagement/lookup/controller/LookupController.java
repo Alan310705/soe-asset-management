@@ -14,6 +14,10 @@ import vn.edu.hust.soict.soe.assetmanagement.lookup.service.LookupService;
 
 import java.util.List;
 
+/**
+ * REST endpoints for dropdown reference data ({@code /api/lookups/*}).
+ * Any authenticated user may call these; used by create/edit forms on the frontend.
+ */
 @RestController
 @RequestMapping("/api/lookups")
 @RequiredArgsConstructor

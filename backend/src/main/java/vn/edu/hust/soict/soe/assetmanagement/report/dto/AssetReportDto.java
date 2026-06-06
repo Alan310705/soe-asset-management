@@ -9,6 +9,9 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
 
+/**
+ * One row in the asset inventory report: financial summary plus category and unit names.
+ */
 @Getter
 @Builder
 @NoArgsConstructor

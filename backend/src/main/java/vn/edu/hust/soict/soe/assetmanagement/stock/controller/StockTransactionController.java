@@ -31,7 +31,7 @@ public class StockTransactionController {
     // ── CS-02 ─────────────────────────────────────────────────────────────
 
     @PostMapping("/receipt")
-    @PreAuthorize("hasAnyRole('SYSTEM_ADMIN', 'WAREHOUSE')")
+    @PreAuthorize("hasRole('WAREHOUSE')")
     public ResponseEntity<ApiResponse<StockTransactionDto>> receipt(
             @Valid @RequestBody ReceiptRequest req,
             Authentication authentication) {
@@ -42,7 +42,7 @@ public class StockTransactionController {
     }
 
     @PostMapping("/issue")
-    @PreAuthorize("hasAnyRole('SYSTEM_ADMIN', 'WAREHOUSE')")
+    @PreAuthorize("hasRole('WAREHOUSE')")
     public ResponseEntity<ApiResponse<StockTransactionDto>> issue(
             @Valid @RequestBody IssueRequest req,
             Authentication authentication) {
