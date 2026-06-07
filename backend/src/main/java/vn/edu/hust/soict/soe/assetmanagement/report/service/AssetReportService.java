@@ -20,6 +20,10 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+/**
+ * Builds paginated asset inventory reports for finance users.
+ * Reads assets via repository filters and maps to {@link AssetReportDto}.
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor

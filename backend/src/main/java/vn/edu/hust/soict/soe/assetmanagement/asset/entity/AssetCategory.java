@@ -3,6 +3,10 @@ package vn.edu.hust.soict.soe.assetmanagement.asset.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+/**
+ * JPA entity for table {@code asset_categories}.
+ * Defines asset types (code, name, useful life, default depreciation method).
+ */
 @Entity
 @Table(name = "asset_categories")
 @Getter

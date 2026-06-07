@@ -9,6 +9,10 @@ import vn.edu.hust.soict.soe.assetmanagement.stock.entity.StockTransaction;
 import vn.edu.hust.soict.soe.assetmanagement.report.dto.StockReportDto;
 
 
+/**
+ * Maps asset and stock entities into report DTOs used by {@link AssetReportService}
+ * and {@link StockReportService}.
+ */
 @Service
 public class ReportMapperService {
 

@@ -6,7 +6,7 @@ import PageHeader from '../../components/PageHeader';
 import { ROLES, useHasAnyRole } from '../../utils/roleGuard';
 
 export default function StockBalancePage() {
-  const canTransact = useHasAnyRole([ROLES.SYSTEM_ADMIN, ROLES.WAREHOUSE]);
+  const canTransact = useHasAnyRole([ROLES.WAREHOUSE]);
   const [data, setData] = useState<StockBalance[]>([]);
   const [loading, setLoading] = useState(false);
 

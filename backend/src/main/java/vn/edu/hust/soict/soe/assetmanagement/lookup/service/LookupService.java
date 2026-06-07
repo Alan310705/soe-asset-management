@@ -17,6 +17,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Read-only reference data for forms and filters.
+ * Returns lightweight {@link LookupItemDto} lists from units, categories, and locations.
+ */
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -32,7 +36,7 @@ public class LookupService {
                 .map(this::toDto)
                 .toList();
     }
-
+    // Returns field values for asset category dropdowns
     public List<LookupItemDto> getAssetCategories() {
         return assetCategoryRepository.findAll().stream()
                 .map(c -> LookupItemDto.builder()
@@ -42,7 +46,7 @@ public class LookupService {
                         .build())
                 .toList();
     }
-
+    // Returns field values for material category dropdowns
     public List<LookupItemDto> getMaterialCategories() {
         return materialCategoryRepository.findAll().stream()
                 .map(c -> LookupItemDto.builder()
@@ -52,7 +56,7 @@ public class LookupService {
                         .build())
                 .toList();
     }
-
+    // Returns field values for storage location dropdowns
     public List<LookupItemDto> getStorageLocations() {
         return storageLocationRepository.findByIsActiveTrue().stream()
                 .map(l -> LookupItemDto.builder()

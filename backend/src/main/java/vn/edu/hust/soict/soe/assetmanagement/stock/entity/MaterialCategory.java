@@ -3,6 +3,9 @@ package vn.edu.hust.soict.soe.assetmanagement.stock.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+/**
+ * JPA entity for table {@code material_categories} (consumable item types).
+ */
 @Entity
 @Table(name = "material_categories")
 @Data @NoArgsConstructor @AllArgsConstructor @Builder

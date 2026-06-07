@@ -10,18 +10,31 @@ import PageHeader from '../../components/PageHeader';
 
 export default function HandoverFormPage() {
   const navigate = useNavigate();
+  const [form] = Form.useForm();
   const [units, setUnits] = useState<LookupItem[]>([]);
   const [assets, setAssets] = useState<FixedAsset[]>([]);
+  const [selectedAsset, setSelectedAsset] = useState<FixedAsset | null>(null);
 
   useEffect(() => {
     lookupApi.managingUnits().then(setUnits);
-    assetApi.list({ page: 0, size: 100 }).then(r => setAssets(r.content));
+    assetApi.list({ page: 0, size: 100 }).then(r => {
+      const activeAssets = r.content.filter(a => a.status !== 'LIQUIDATED');
+      setAssets(activeAssets);
+    });
   }, []);
+
+  const handleAssetChange = (assetId: string) => {
+    const asset = assets.find(a => a.id === assetId);
+    setSelectedAsset(asset || null);
+    if (asset) {
+      form.setFieldValue('fromUnitId', asset.managingUnitId);
+    }
+  };
 
   return (
     <>
       <PageHeader title="Tạo yêu cầu bàn giao" />
-      <Form layout="vertical" style={{ maxWidth: 640 }} onFinish={async (v) => {
+      <Form form={form} layout="vertical" style={{ maxWidth: 640 }} onFinish={async (v) => {
         try {
           const created = await handoverApi.create(v);
           message.success('Tạo yêu cầu thành công.');
@@ -29,10 +42,10 @@ export default function HandoverFormPage() {
         } catch { message.error('Tạo yêu cầu thất bại.'); }
       }}>
         <Form.Item name="assetId" label="Tài sản" rules={[{ required: true }]}>
-          <Select options={assets.map(a => ({ value: a.id, label: `${a.assetCode} - ${a.name}` }))} showSearch optionFilterProp="label" />
+          <Select options={assets.map(a => ({ value: a.id, label: `${a.assetCode} - ${a.name}` }))} showSearch optionFilterProp="label" onChange={handleAssetChange} />
         </Form.Item>
-        <Form.Item name="fromUnitId" label="Đơn vị bàn giao" rules={[{ required: true }]}>
-          <Select options={units.map(u => ({ value: u.id, label: u.name }))} />
+        <Form.Item name="fromUnitId" label="Đơn vị bàn giao (tự động từ tài sản)" rules={[{ required: true }]}>
+          <Select disabled options={units.map(u => ({ value: u.id, label: u.name }))} placeholder="Chọn tài sản trước" />
         </Form.Item>
         <Form.Item name="toUnitId" label="Đơn vị tiếp nhận" rules={[{ required: true }]}>
           <Select options={units.map(u => ({ value: u.id, label: u.name }))} />

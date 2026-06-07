@@ -4,14 +4,18 @@ import { Button, Descriptions, Input, InputNumber, Modal, Space, message } from 
 import { liquidationApi, type Liquidation } from '../../api/liquidationApi';
 import PageHeader from '../../components/PageHeader';
 import StatusBadge from '../../components/StatusBadge';
+import ExportButton, { downloadBlob } from '../../components/ExportButton';
 import { formatCurrency } from '../../utils/formatCurrency';
+import { useAuthStore } from '../../store/authStore';
 import { ROLES, useHasAnyRole } from '../../utils/roleGuard';
 
 export default function LiquidationDetailPage() {
   const { id } = useParams<{ id: string }>();
   const [item, setItem] = useState<Liquidation | null>(null);
-  const isManager = useHasAnyRole([ROLES.SYSTEM_ADMIN, ROLES.ASSET_MANAGER]);
-  const isApprover = useHasAnyRole([ROLES.SYSTEM_ADMIN, ROLES.APPROVING_AUTH]);
+  const isManager = useHasAnyRole([ROLES.ASSET_MANAGER]);
+  const isApprover = useHasAnyRole([ROLES.APPROVING_AUTH]);
+  const currentUsername = useAuthStore((s) => s.user?.username);
+  const canApproveAsManager = isManager && item?.initiatedBy !== currentUsername;
 
   const reload = async () => {
     if (!id) return;
@@ -50,7 +54,14 @@ export default function LiquidationDetailPage() {
 
   return (
     <>
-      <PageHeader title={`Thanh lý ${item.requestCode}`} />
+      <PageHeader title={`Thanh lý ${item.requestCode}`} extra={
+        item.status === 'COMPLETED' && (
+          <ExportButton label="Tải PDF" onExport={async () => {
+            const blob = await liquidationApi.downloadDocument(id);
+            downloadBlob(blob, `${item.requestCode}.pdf`);
+          }} />
+        )
+      } />
       <Descriptions bordered column={1} size="small">
         <Descriptions.Item label="Trạng thái"><StatusBadge status={item.status} /></Descriptions.Item>
         <Descriptions.Item label="Lý do">{item.justification}</Descriptions.Item>
@@ -58,10 +69,11 @@ export default function LiquidationDetailPage() {
         <Descriptions.Item label="Giá trị thị trường">{item.currentMarketValue != null ? formatCurrency(item.currentMarketValue) : '—'}</Descriptions.Item>
         <Descriptions.Item label="Phương thức">{item.disposalMethod}</Descriptions.Item>
         <Descriptions.Item label="Giá trị cuối">{item.finalDisposalValue != null ? formatCurrency(item.finalDisposalValue) : '—'}</Descriptions.Item>
+        {item.documentRef && <Descriptions.Item label="Số biên bản">{item.documentRef}</Descriptions.Item>}
       </Descriptions>
       <Space style={{ marginTop: 16 }} wrap>
         {item.status === 'DRAFT' && isManager && <Button onClick={() => { liquidationApi.submit(id).then(() => reload()); }}>Nộp duyệt</Button>}
-        {item.status === 'PENDING_MANAGER' && isManager && <Button type="primary" onClick={() => prompt('Ghi chú quản lý', async (n) => { await liquidationApi.approveManager(id, n); })}>Duyệt (QL)</Button>}
+        {item.status === 'PENDING_MANAGER' && canApproveAsManager && <Button type="primary" onClick={() => prompt('Ghi chú quản lý', async (n) => { await liquidationApi.approveManager(id, n); })}>Duyệt (QL)</Button>}
         {item.status === 'PENDING_DIRECTOR' && isApprover && <Button type="primary" onClick={() => prompt('Ghi chú giám đốc', async (n) => { await liquidationApi.approveDirector(id, n); })}>Duyệt (GĐ)</Button>}
         {item.status === 'APPROVED' && isManager && <Button type="primary" onClick={promptComplete}>Hoàn tất</Button>}
         {['PENDING_MANAGER', 'PENDING_DIRECTOR'].includes(item.status) && (isManager || isApprover) && (

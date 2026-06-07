@@ -46,7 +46,7 @@ import java.util.UUID;
  *   Additional @PreAuthorize annotations below restrict specific operations:
  *     - Creating and submitting  → ASSET_MANAGER (the person who manages assets)
  *     - Approving and rejecting  → APPROVING_AUTH (the designated approver)
- *     - Confirming               → APPROVING_AUTH or ASSET_MANAGER
+ *     - Confirming               → ASSET_MANAGER (receiving unit)
  *     - Completing               → SYSTEM_ADMIN or ASSET_MANAGER
  *     - Reading                  → all three roles
  *
@@ -152,7 +152,7 @@ public class HandoverController {
      *         400 Bad Request if business rules are violated (e.g. duplicate active request).
      */
     @PostMapping
-    @PreAuthorize("hasAnyRole('SYSTEM_ADMIN', 'ASSET_MANAGER')")
+    @PreAuthorize("hasRole('ASSET_MANAGER')")
     @Operation(summary = "Tạo yêu cầu bàn giao mới",
                description = "Tạo một yêu cầu bàn giao tài sản ở trạng thái DRAFT. " +
                              "Người tạo được xác định tự động từ token JWT.")
@@ -184,7 +184,7 @@ public class HandoverController {
      * @return 200 OK with the updated HandoverDto in PENDING_APPROVAL status.
      */
     @PutMapping("/{id}/submit")
-    @PreAuthorize("hasAnyRole('SYSTEM_ADMIN', 'ASSET_MANAGER')")
+    @PreAuthorize("hasRole('ASSET_MANAGER')")
     @Operation(summary = "Nộp yêu cầu bàn giao để phê duyệt",
                description = "Chuyển trạng thái từ DRAFT sang PENDING_APPROVAL.")
     public ResponseEntity<ApiResponse<HandoverDto>> submitHandover(
@@ -216,7 +216,7 @@ public class HandoverController {
      * @return 200 OK with the updated HandoverDto in APPROVED status.
      */
     @PutMapping("/{id}/approve")
-    @PreAuthorize("hasAnyRole('SYSTEM_ADMIN', 'APPROVING_AUTH')")
+    @PreAuthorize("hasRole('APPROVING_AUTH')")
     @Operation(summary = "Phê duyệt yêu cầu bàn giao",
                description = "Phê duyệt yêu cầu (bước 1). Tài sản sẽ được đánh dấu TRANSFERRED. " +
                              "Người phê duyệt không được là người tạo yêu cầu (tách biệt nhiệm vụ).")
@@ -248,7 +248,7 @@ public class HandoverController {
      * @return 200 OK with the updated HandoverDto in CONFIRMED status.
      */
     @PutMapping("/{id}/confirm")
-    @PreAuthorize("hasAnyRole('SYSTEM_ADMIN', 'ASSET_MANAGER', 'APPROVING_AUTH')")
+    @PreAuthorize("hasRole('ASSET_MANAGER')")
     @Operation(summary = "Đơn vị tiếp nhận xác nhận bàn giao",
                description = "Đơn vị tiếp nhận xác nhận đã nhận tài sản (bước 2). " +
                              "Chuyển trạng thái từ APPROVED sang CONFIRMED.")
@@ -282,7 +282,7 @@ public class HandoverController {
      * @return 200 OK with the updated HandoverDto in COMPLETED status.
      */
     @PutMapping("/{id}/complete")
-    @PreAuthorize("hasAnyRole('SYSTEM_ADMIN', 'ASSET_MANAGER')")
+    @PreAuthorize("hasRole('ASSET_MANAGER')")
     @Operation(summary = "Hoàn tất quy trình bàn giao",
                description = "Đóng quy trình bàn giao và tạo biên bản bàn giao (HL-03). " +
                              "Chuyển trạng thái từ CONFIRMED sang COMPLETED.")
@@ -317,7 +317,7 @@ public class HandoverController {
      * @return 200 OK with the updated HandoverDto in REJECTED status.
      */
     @PutMapping("/{id}/reject")
-    @PreAuthorize("hasAnyRole('SYSTEM_ADMIN', 'APPROVING_AUTH')")
+    @PreAuthorize("hasRole('APPROVING_AUTH')")
     @Operation(summary = "Từ chối yêu cầu bàn giao",
                description = "Từ chối yêu cầu ở bất kỳ bước nào còn đang xử lý. " +
                              "Nếu đã phê duyệt, tài sản sẽ được hoàn trả trạng thái IN_USE. " +

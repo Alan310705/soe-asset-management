@@ -20,6 +20,9 @@ import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
+/**
+ * Exports report data to CSV, Excel, or PDF byte arrays for download endpoints.
+ */
 @Service
 public class ExportService {
 

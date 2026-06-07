@@ -14,7 +14,7 @@ import { ROLES, useHasAnyRole } from '../../utils/roleGuard';
 
 export default function AssetListPage() {
   const navigate = useNavigate();
-  const canEdit = useHasAnyRole([ROLES.SYSTEM_ADMIN, ROLES.ASSET_MANAGER]);
+  const canEdit = useHasAnyRole([ROLES.ASSET_MANAGER]);
   const [data, setData] = useState<FixedAsset[]>([]);
   const [loading, setLoading] = useState(false);
   const [total, setTotal] = useState(0);

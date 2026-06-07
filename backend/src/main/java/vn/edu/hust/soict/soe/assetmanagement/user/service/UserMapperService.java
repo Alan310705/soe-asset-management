@@ -6,6 +6,9 @@ import vn.edu.hust.soict.soe.assetmanagement.user.entity.User;
 
 import java.util.stream.Collectors;
 
+/**
+ * Maps {@link User} entities to {@link UserDto}, hiding password hash and exposing role codes.
+ */
 @Service
 public class UserMapperService {
 

@@ -13,21 +13,23 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Database access for {@link StockTransaction} rows.
+ * Includes on-the-fly balance and department-usage aggregation queries (CS-03, CS-04).
+ */
 @Repository
 public interface StockTransactionRepository extends JpaRepository<StockTransaction, UUID> {
 
     /** CS-02: History for one material */
     List<StockTransaction> findByMaterialIdOrderByDocumentDateDesc(UUID materialId);
 
-    // ── CS-03: On-the-fly balance queries ────────────────────────────────
-
     /**
      * Available stock for one material at one location.
-     * Used in StockTransactionService to guard against over-issuing.
+     * RECEIPT adds quantity; ISSUE and ADJUSTMENT subtract.
      */
     @Query("""
         SELECT COALESCE(SUM(
-            CASE WHEN t.transactionType = vn.edu.hust.soict.soe.assetmanagement.stock.entity.TransactionType.RECEIPT
+            CASE WHEN t.transactionType = 'RECEIPT'
                  THEN t.quantity ELSE -t.quantity END
         ), 0)
         FROM StockTransaction t
@@ -38,9 +40,7 @@ public interface StockTransactionRepository extends JpaRepository<StockTransacti
             @Param("materialId") UUID materialId,
             @Param("locationId") UUID locationId);
 
-    /**
-     * Balance for ALL materials across ALL locations (GET /api/stock/balance)
-     */
+    /** Balance for ALL materials across ALL locations (GET /api/stock/balance) */
     @Query("""
         SELECT new vn.edu.hust.soict.soe.assetmanagement.stock.dto.StockBalanceDto(
             t.material.id,
@@ -49,10 +49,10 @@ public interface StockTransactionRepository extends JpaRepository<StockTransacti
             t.storageLocation.id,
             t.storageLocation.name,
             t.material.unitOfMeasure,
-            SUM(CASE WHEN t.transactionType = vn.edu.hust.soict.soe.assetmanagement.stock.entity.TransactionType.RECEIPT
+            SUM(CASE WHEN t.transactionType = 'RECEIPT'
                      THEN t.quantity ELSE -t.quantity END),
             t.material.minimumStock,
-            SUM(CASE WHEN t.transactionType = vn.edu.hust.soict.soe.assetmanagement.stock.entity.TransactionType.RECEIPT
+            SUM(CASE WHEN t.transactionType = 'RECEIPT'
                      THEN t.quantity ELSE -t.quantity END) < t.material.minimumStock
         )
         FROM StockTransaction t
@@ -63,9 +63,7 @@ public interface StockTransactionRepository extends JpaRepository<StockTransacti
         """)
     List<StockBalanceDto> getAllBalances();
 
-    /**
-     * Balance for ONE material (GET /api/stock/balance/{materialId})
-     */
+    /** Balance for ONE material (GET /api/stock/balance/{materialId}) */
     @Query("""
         SELECT new vn.edu.hust.soict.soe.assetmanagement.stock.dto.StockBalanceDto(
             t.material.id,
@@ -74,10 +72,10 @@ public interface StockTransactionRepository extends JpaRepository<StockTransacti
             t.storageLocation.id,
             t.storageLocation.name,
             t.material.unitOfMeasure,
-            SUM(CASE WHEN t.transactionType = vn.edu.hust.soict.soe.assetmanagement.stock.entity.TransactionType.RECEIPT
+            SUM(CASE WHEN t.transactionType = 'RECEIPT'
                      THEN t.quantity ELSE -t.quantity END),
             t.material.minimumStock,
-            SUM(CASE WHEN t.transactionType = vn.edu.hust.soict.soe.assetmanagement.stock.entity.TransactionType.RECEIPT
+            SUM(CASE WHEN t.transactionType = 'RECEIPT'
                      THEN t.quantity ELSE -t.quantity END) < t.material.minimumStock
         )
         FROM StockTransaction t
@@ -88,10 +86,8 @@ public interface StockTransactionRepository extends JpaRepository<StockTransacti
         """)
     List<StockBalanceDto> getBalanceByMaterial(@Param("materialId") UUID materialId);
 
-    // ── CS-04: Department usage ───────────────────────────────────────────
-
     /**
-     * Department-wise consumption summary (GET /api/stock/usage)
+     * Department-wise consumption summary (GET /api/stock/usage).
      * Date range is optional — pass null to get all time.
      */
     @Query("""
@@ -105,7 +101,7 @@ public interface StockTransactionRepository extends JpaRepository<StockTransacti
             SUM(t.totalValue)
         )
         FROM StockTransaction t
-        WHERE t.transactionType = vn.edu.hust.soict.soe.assetmanagement.stock.entity.TransactionType.ISSUE
+        WHERE t.transactionType = 'ISSUE'
           AND (:startDate IS NULL OR t.documentDate >= :startDate)
           AND (:endDate   IS NULL OR t.documentDate <= :endDate)
         GROUP BY t.requestingDepartmentId, t.material.id,

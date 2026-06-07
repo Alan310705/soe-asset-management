@@ -7,7 +7,7 @@ import StatusBadge from '../../components/StatusBadge';
 import { ROLES, useHasAnyRole } from '../../utils/roleGuard';
 
 export default function LiquidationListPage() {
-  const canCreate = useHasAnyRole([ROLES.SYSTEM_ADMIN, ROLES.ASSET_MANAGER]);
+  const canCreate = useHasAnyRole([ROLES.ASSET_MANAGER]);
   const [data, setData] = useState<Liquidation[]>([]);
   const [loading, setLoading] = useState(false);
 

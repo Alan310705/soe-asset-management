@@ -19,7 +19,7 @@ public class UserDto {
     private String fullName;
     private String email;
     private String phone;
-    private boolean isActive;
+    private Boolean isActive;
     private Set<String> roles;
     private Set<String> managingUnitCodes;
 }

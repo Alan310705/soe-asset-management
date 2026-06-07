@@ -1,14 +1,16 @@
 import { useEffect, useState } from 'react';
-import { Form, Input, InputNumber, Select, Button, message } from 'antd';
+import { Form, Input, InputNumber, Select, Button, message, Alert } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { stockApi } from '../../api/stockApi';
 import { lookupApi } from '../../api/lookupApi';
 import type { LookupItem } from '../../types/common.types';
 import type { Material } from '../../api/stockApi';
 import PageHeader from '../../components/PageHeader';
+import { ROLES, useHasAnyRole } from '../../utils/roleGuard';
 
 export default function StockReceiptPage() {
   const navigate = useNavigate();
+  const canAccess = useHasAnyRole([ROLES.WAREHOUSE]);
   const [materials, setMaterials] = useState<Material[]>([]);
   const [locations, setLocations] = useState<LookupItem[]>([]);
   const [loading, setLoading] = useState(false);
@@ -17,6 +19,15 @@ export default function StockReceiptPage() {
     stockApi.materials({ page: 0, size: 200 }).then(r => setMaterials(r.content));
     lookupApi.storageLocations().then(setLocations);
   }, []);
+
+  if (!canAccess) {
+    return (
+      <>
+        <PageHeader title="Nhập kho vật tư" />
+        <Alert message="Chỉ thủ kho có thể nhập kho vật tư." type="error" />
+      </>
+    );
+  }
 
   return (
     <>

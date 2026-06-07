@@ -8,7 +8,7 @@ import { formatDateTime } from '../../utils/formatDate';
 import { ROLES, useHasAnyRole } from '../../utils/roleGuard';
 
 export default function HandoverListPage() {
-  const canCreate = useHasAnyRole([ROLES.SYSTEM_ADMIN, ROLES.ASSET_MANAGER]);
+  const canCreate = useHasAnyRole([ROLES.ASSET_MANAGER]);
   const [data, setData] = useState<Handover[]>([]);
   const [loading, setLoading] = useState(false);
 

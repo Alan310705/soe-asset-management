@@ -8,6 +8,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Database access for warehouse/storage locations linked to managing units.
+ */
 @Repository
 public interface StorageLocationRepository extends JpaRepository<StorageLocation, UUID> {
     Optional<StorageLocation> findByCode(String code);

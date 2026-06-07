@@ -56,7 +56,7 @@ public class MaterialController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('SYSTEM_ADMIN', 'WAREHOUSE')")
+    @PreAuthorize("hasRole('WAREHOUSE')")
     public ResponseEntity<ApiResponse<MaterialDto>> create(
             @Valid @RequestBody CreateMaterialRequest req, 
             Authentication authentication) {
@@ -68,7 +68,7 @@ public class MaterialController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('SYSTEM_ADMIN', 'WAREHOUSE')")
+    @PreAuthorize("hasRole('WAREHOUSE')")
     public ResponseEntity<ApiResponse<MaterialDto>> update(
             @PathVariable UUID id,
             @Valid @RequestBody UpdateMaterialRequest req,

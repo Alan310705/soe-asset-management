@@ -1,10 +1,13 @@
 import { useEffect, useState } from 'react';
-import { Table, message } from 'antd';
+import { Table, message, Button } from 'antd';
+import { Link } from 'react-router-dom';
 import { stockApi, type Material } from '../../api/stockApi';
 import PageHeader from '../../components/PageHeader';
 import { formatCurrency } from '../../utils/formatCurrency';
+import { ROLES, useHasAnyRole } from '../../utils/roleGuard';
 
 export default function MaterialListPage() {
+  const canCreate = useHasAnyRole([ROLES.WAREHOUSE]);
   const [data, setData] = useState<Material[]>([]);
   const [loading, setLoading] = useState(false);
   const [total, setTotal] = useState(0);
@@ -22,7 +25,7 @@ export default function MaterialListPage() {
 
   return (
     <>
-      <PageHeader title="Danh mục vật tư" />
+      <PageHeader title="Danh mục vật tư" extra={canCreate && <Link to="/materials/new"><Button type="primary">Thêm vật tư</Button></Link>} />
       <Table rowKey="id" loading={loading} dataSource={data}
         pagination={{ current: page + 1, total, pageSize: 20, onChange: (p) => load(p - 1) }}
         columns={[

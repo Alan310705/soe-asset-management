@@ -4,6 +4,9 @@ import org.springframework.stereotype.Component;
 import vn.edu.hust.soict.soe.assetmanagement.audit.dto.AuditLogDto;
 import vn.edu.hust.soict.soe.assetmanagement.audit.entity.AuditLog;
 
+/**
+ * Maps {@link AuditLog} entities to {@link AuditLogDto} for the audit API.
+ */
 @Component
 public class AuditMapperService {
 

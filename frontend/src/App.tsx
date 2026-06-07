@@ -9,6 +9,7 @@ import AssetListPage from './pages/assets/AssetListPage';
 import AssetDetailPage from './pages/assets/AssetDetailPage';
 import AssetFormPage from './pages/assets/AssetFormPage';
 import MaterialListPage from './pages/stock/MaterialListPage';
+import MaterialFormPage from './pages/stock/MaterialFormPage';
 import StockBalancePage from './pages/stock/StockBalancePage';
 import StockReceiptPage from './pages/stock/StockReceiptPage';
 import StockIssuePage from './pages/stock/StockIssuePage';
@@ -50,6 +51,7 @@ const App: React.FC = () => (
           <Route path="assets/:id" element={<AssetDetailPage />} />
           <Route path="assets/:id/edit" element={<AssetFormPage />} />
           <Route path="materials" element={<MaterialListPage />} />
+          <Route path="materials/new" element={<MaterialFormPage />} />
           <Route path="stock/balance" element={<StockBalancePage />} />
           <Route path="stock/receipt" element={<StockReceiptPage />} />
           <Route path="stock/issue" element={<StockIssuePage />} />

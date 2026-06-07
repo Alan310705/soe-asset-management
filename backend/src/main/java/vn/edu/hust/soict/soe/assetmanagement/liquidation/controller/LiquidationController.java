@@ -47,12 +47,12 @@ import java.util.UUID;
  *   /api/liquidations/** → hasAnyRole('SYSTEM_ADMIN', 'ASSET_MANAGER', 'APPROVING_AUTH')
  *   Additional @PreAuthorize on specific methods:
  *     - Creating and submitting  → ASSET_MANAGER initiates disposal requests
- *     - Manager-level approval   → APPROVING_AUTH acts as the manager approver
- *     - Director-level approval  → APPROVING_AUTH also acts as director approver
+ *     - Manager-level approval   → ASSET_MANAGER (must differ from initiator — BR-02)
+ *     - Director-level approval  → APPROVING_AUTH
  *       (In a real deployment this might be a separate DIRECTOR role, but per
  *       the SRS role table only 5 roles are defined, and APPROVING_AUTH covers both)
  *     - Completing               → SYSTEM_ADMIN or ASSET_MANAGER finalises the record
- *     - Rejecting                → APPROVING_AUTH at either step
+ *     - Rejecting                → ASSET_MANAGER or APPROVING_AUTH
  *     - Reading                  → all three roles
  *
  * API ENDPOINTS:
@@ -147,7 +147,7 @@ public class LiquidationController {
      * @return 201 Created with the new LiquidationDto.
      */
     @PostMapping
-    @PreAuthorize("hasAnyRole('SYSTEM_ADMIN', 'ASSET_MANAGER')")
+    @PreAuthorize("hasRole('ASSET_MANAGER')")
     @Operation(summary = "Tạo yêu cầu thanh lý mới",
                description = "Tạo một yêu cầu thanh lý tài sản ở trạng thái DRAFT. " +
                              "Người tạo được xác định tự động từ token JWT.")
@@ -177,7 +177,7 @@ public class LiquidationController {
      * @return 200 OK with updated LiquidationDto in PENDING_MANAGER status.
      */
     @PutMapping("/{id}/submit")
-    @PreAuthorize("hasAnyRole('SYSTEM_ADMIN', 'ASSET_MANAGER')")
+    @PreAuthorize("hasRole('ASSET_MANAGER')")
     @Operation(summary = "Nộp yêu cầu thanh lý để xét duyệt",
                description = "Chuyển trạng thái từ DRAFT sang PENDING_MANAGER.")
     public ResponseEntity<ApiResponse<LiquidationDto>> submitLiquidation(
@@ -207,7 +207,7 @@ public class LiquidationController {
      * @return 200 OK with updated LiquidationDto in PENDING_DIRECTOR status.
      */
     @PutMapping("/{id}/approve-manager")
-    @PreAuthorize("hasAnyRole('SYSTEM_ADMIN', 'APPROVING_AUTH')")
+    @PreAuthorize("hasRole('ASSET_MANAGER')")
     @Operation(summary = "Phê duyệt cấp quản lý",
                description = "Bước 1: Phê duyệt cấp quản lý. Người phê duyệt không được là " +
                              "người tạo yêu cầu (tách biệt nhiệm vụ). " +
@@ -283,7 +283,7 @@ public class LiquidationController {
      * @return 200 OK with updated LiquidationDto in COMPLETED status.
      */
     @PutMapping("/{id}/complete")
-    @PreAuthorize("hasAnyRole('SYSTEM_ADMIN', 'ASSET_MANAGER')")
+    @PreAuthorize("hasRole('ASSET_MANAGER')")
     @Operation(summary = "Hoàn tất quy trình thanh lý",
                description = "Đóng quy trình thanh lý. Tài sản sẽ bị đánh dấu LIQUIDATED " +
                              "vĩnh viễn và không thể sửa đổi (BR-05). " +
@@ -325,7 +325,7 @@ public class LiquidationController {
      * @return 200 OK with updated LiquidationDto in REJECTED status.
      */
     @PutMapping("/{id}/reject")
-    @PreAuthorize("hasAnyRole('SYSTEM_ADMIN', 'APPROVING_AUTH')")
+    @PreAuthorize("hasAnyRole('ASSET_MANAGER', 'APPROVING_AUTH')")
     @Operation(summary = "Từ chối yêu cầu thanh lý",
                description = "Từ chối yêu cầu tại bước 1 (PENDING_MANAGER) hoặc bước 2 " +
                              "(PENDING_DIRECTOR). Không thể từ chối khi đã APPROVED. " +

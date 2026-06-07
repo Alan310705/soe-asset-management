@@ -10,8 +10,8 @@ import { ROLES, useHasAnyRole } from '../../utils/roleGuard';
 export default function HandoverDetailPage() {
   const { id } = useParams<{ id: string }>();
   const [item, setItem] = useState<Handover | null>(null);
-  const isManager = useHasAnyRole([ROLES.SYSTEM_ADMIN, ROLES.ASSET_MANAGER]);
-  const isApprover = useHasAnyRole([ROLES.SYSTEM_ADMIN, ROLES.APPROVING_AUTH]);
+  const isManager = useHasAnyRole([ROLES.ASSET_MANAGER]);
+  const isApprover = useHasAnyRole([ROLES.APPROVING_AUTH]);
 
   const reload = async () => {
     if (!id) return;
@@ -50,11 +50,12 @@ export default function HandoverDetailPage() {
         <Descriptions.Item label="Trạng thái"><StatusBadge status={item.status} /></Descriptions.Item>
         <Descriptions.Item label="Lý do">{item.reason}</Descriptions.Item>
         <Descriptions.Item label="Người tạo">{item.initiatedBy}</Descriptions.Item>
+        {item.documentRef && <Descriptions.Item label="Số biên bản">{item.documentRef}</Descriptions.Item>}
       </Descriptions>
       <Space style={{ marginTop: 16 }} wrap>
         {item.status === 'DRAFT' && isManager && <Button onClick={() => { handoverApi.submit(id).then(() => reload()); }}>Nộp duyệt</Button>}
         {item.status === 'PENDING_APPROVAL' && isApprover && <Button type="primary" onClick={() => prompt('Ghi chú phê duyệt', async (n) => { await handoverApi.approve(id, n); })}>Phê duyệt</Button>}
-        {item.status === 'APPROVED' && <Button onClick={() => prompt('Ghi chú xác nhận', async (n) => { await handoverApi.confirm(id, n); })}>Xác nhận nhận</Button>}
+        {item.status === 'APPROVED' && isManager && <Button onClick={() => prompt('Ghi chú xác nhận', async (n) => { await handoverApi.confirm(id, n); })}>Xác nhận nhận</Button>}
         {item.status === 'CONFIRMED' && isManager && <Button type="primary" onClick={() => { handoverApi.complete(id).then(() => reload()); }}>Hoàn tất</Button>}
         {['PENDING_APPROVAL', 'APPROVED'].includes(item.status) && isApprover && (
           <Button danger onClick={() => prompt('Lý do từ chối', async (r) => { await handoverApi.reject(id, r); }, true)}>Từ chối</Button>

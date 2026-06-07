@@ -7,12 +7,17 @@ import vn.edu.hust.soict.soe.assetmanagement.asset.dto.AssetHistoryDTO;
 import vn.edu.hust.soict.soe.assetmanagement.asset.entity.AssetHistory;
 import vn.edu.hust.soict.soe.assetmanagement.asset.entity.FixedAsset;
 import vn.edu.hust.soict.soe.assetmanagement.asset.enums.AssetStatus;
+import vn.edu.hust.soict.soe.assetmanagement.asset.enums.DepreciationMethod;
 import vn.edu.hust.soict.soe.assetmanagement.lookup.service.LookupService;
 
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
+/**
+ * Converts between {@link FixedAsset} entities and {@link FixedAssetDTO} for the API.
+ * Enriches DTOs with category and unit names via {@link LookupService}.
+ */
 @Service
 @RequiredArgsConstructor
 public class AssetMapperService {
@@ -55,10 +60,22 @@ public class AssetMapperService {
                 .accumulatedDepreciation(BigDecimal.ZERO)
                 .netBookValue(dto.getOriginalCost())
                 .status(AssetStatus.IN_USE)
-                .depreciationMethod(dto.getDepreciationMethod())
+                .depreciationMethod(resolveDepreciationMethod(dto))
                 .notes(dto.getNotes())
                 .build();
 }
+
+    private DepreciationMethod resolveDepreciationMethod(FixedAssetDTO dto) {
+        if (dto.getDepreciationMethod() != null) {
+            return dto.getDepreciationMethod();
+        }
+        if (dto.getCategoryId() != null) {
+            return lookupService.findAssetCategory(dto.getCategoryId())
+                    .map(c -> DepreciationMethod.valueOf(c.getDepreciationMethod()))
+                    .orElse(DepreciationMethod.STRAIGHT_LINE);
+        }
+        return DepreciationMethod.STRAIGHT_LINE;
+    }
 
     public FixedAssetDTO toDto(FixedAsset asset) {
         FixedAssetDTO dto = FixedAssetDTO.builder()
