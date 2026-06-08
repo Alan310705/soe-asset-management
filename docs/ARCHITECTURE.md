@@ -166,7 +166,7 @@ The system defines **5 roles** mapped to Vietnamese SOE organizational structure
 | **Liquidation Workflow** |
 | View liquidation requests | ✓ | ✓ | ✗ | ✓ | ✗ |
 | Create liquidation request | ✗ | ✓ | ✗ | ✗ | ✗ |
-| Approve (Manager level) | ✗ | ✓ | ✗ | ✗ | ✗ |
+| Approve (Manager level) | ✗ | ✗ | ✗ | ✓ | ✗ |
 | Approve (Director level) | ✗ | ✗ | ✗ | ✓ | ✗ |
 | Complete liquidation | ✗ | ✗ | ✗ | ✓ | ✗ |
 | Reject liquidation | ✗ | ✓ | ✗ | ✓ | ✗ |
