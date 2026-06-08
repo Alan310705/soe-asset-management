@@ -67,45 +67,6 @@ The frontend will be available at `http://localhost:5173`.
 
 ---
 
-## Testing
-
-### Backend (Spring Boot)
-The backend test suite is powered by JUnit 5, Mockito, and an in-memory **H2 Database**.
-
-```bash
-cd backend
-
-# Run the entire test suite
-./mvnw clean test
-
-# Run a specific test class (e.g., StockTransactionRepositoryTest)
-./mvnw test -Dtest=StockTransactionRepositoryTest
-```
-
-### Frontend (React + Vite)
-```bash
-cd frontend
-
-# Run all UI unit tests
-npm run test
-
-# Run tests in watch mode (for active development)
-npm run test:watch
-```
-
----
-
-### API Documentation & Testing
-
-#### Swagger UI
-
-Once the Spring Boot backend is running, access the auto-generated API documentation at:
-`http://localhost:8080/swagger-ui/index.html`
-
-**Authentication:** To test secured endpoints directly in the browser, click the **Authorize** padlock button at the top of the Swagger UI and paste your JWT token. Swagger will automatically inject the `Authorization: Bearer <token>` header into all requests.
-
----
-
 # Documents
 
 | Document | Location |
