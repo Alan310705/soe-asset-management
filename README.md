@@ -9,8 +9,8 @@ A standardized platform for managing fixed assets, consumable stock, handovers, 
 | Member | Role | Responsible For |
 |--------|------|-----------------|
 | **M1** | Project Manager · Backend Foundation | Auth, RBAC, DB schema, config, shared infra |
-| **M2** | Fixed Assets Module | FA-01 to FA-04 — asset CRUD, depreciation |
-| **M3** | Consumable Stock Module | CS-01 to CS-04 — materials, stock transactions |
+| **M2** | Fixed Assets Module | FA-01 to FA-04, asset CRUD, depreciation |
+| **M3** | Consumable Stock Module | CS-01 to CS-04, materials, stock transactions |
 | **M4** | Handover · Liquidation · Audit · Reporting | HL-01 to HL-03, RP-01 to RP-03 |
 | **M5** | Frontend (All Modules) | React + TypeScript + Ant Design UI |
 

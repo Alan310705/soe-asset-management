@@ -49,7 +49,7 @@ export default function AppLayout() {
   return (
     <Layout style={{ minHeight: '100vh' }}>
       <Sider breakpoint="lg" collapsedWidth={0} theme="dark">
-        <div style={{ padding: 16, color: '#fff', fontWeight: 700, textAlign: 'center' }}>SOE AMS</div>
+        <div style={{ padding: 16, color: '#fff', fontWeight: 700, textAlign: 'center' }}>SOE AIMS</div>
         <Menu theme="dark" mode="inline" selectedKeys={[location.pathname]} items={items} />
       </Sider>
       <Layout>
