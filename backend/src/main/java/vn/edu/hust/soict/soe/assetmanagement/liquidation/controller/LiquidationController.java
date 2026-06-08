@@ -44,14 +44,14 @@ import java.util.UUID;
  *   5. No business logic — all validation and processing is in LiquidationService
  *
  * SECURITY (from SecurityConfig.java):
- *   /api/liquidations/** → hasAnyRole('SYSTEM_ADMIN', 'ASSET_MANAGER', 'APPROVING_AUTH')
+ *   /api/liquidations/** → hasAnyRole('SYSTEM_ADMIN', 'ASSET_MANAGER', 'APPROVING_AUTH', 'FINANCE_AUDIT')
  *   Additional @PreAuthorize on specific methods:
  *     - Creating and submitting  → ASSET_MANAGER initiates disposal requests
  *     - Manager-level approval   → ASSET_MANAGER (must differ from initiator — BR-02)
  *     - Director-level approval  → APPROVING_AUTH
  *       (In a real deployment this might be a separate DIRECTOR role, but per
  *       the SRS role table only 5 roles are defined, and APPROVING_AUTH covers both)
- *     - Completing               → SYSTEM_ADMIN or ASSET_MANAGER finalises the record
+ *     - Completing               → FINANCE_AUDIT finalises the record (APPROVED → COMPLETED)
  *     - Rejecting                → ASSET_MANAGER or APPROVING_AUTH
  *     - Reading                  → all three roles
  *
@@ -89,7 +89,7 @@ public class LiquidationController {
      * @return 200 OK with ApiResponse wrapping PageResponse<LiquidationDto>.
      */
     @GetMapping
-    @PreAuthorize("hasAnyRole('SYSTEM_ADMIN', 'ASSET_MANAGER', 'APPROVING_AUTH')")
+    @PreAuthorize("hasAnyRole('SYSTEM_ADMIN', 'ASSET_MANAGER', 'APPROVING_AUTH', 'FINANCE_AUDIT')")
     @Operation(summary = "Danh sách yêu cầu thanh lý",
                description = "Trả về danh sách phân trang tất cả yêu cầu thanh lý tài sản. " +
                              "Mặc định sắp xếp theo thời gian tạo mới nhất trước.")
@@ -120,7 +120,7 @@ public class LiquidationController {
      * @return 200 OK with LiquidationDto, or 404 if not found.
      */
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('SYSTEM_ADMIN', 'ASSET_MANAGER', 'APPROVING_AUTH')")
+    @PreAuthorize("hasAnyRole('SYSTEM_ADMIN', 'ASSET_MANAGER', 'APPROVING_AUTH', 'FINANCE_AUDIT')")
     @Operation(summary = "Chi tiết yêu cầu thanh lý",
                description = "Trả về toàn bộ thông tin của một yêu cầu thanh lý theo ID.")
     public ResponseEntity<ApiResponse<LiquidationDto>> getLiquidationById(
@@ -283,9 +283,9 @@ public class LiquidationController {
      * @return 200 OK with updated LiquidationDto in COMPLETED status.
      */
     @PutMapping("/{id}/complete")
-    @PreAuthorize("hasRole('ASSET_MANAGER')")
+    @PreAuthorize("hasAnyRole('SYSTEM_ADMIN', 'FINANCE_AUDIT')")
     @Operation(summary = "Hoàn tất quy trình thanh lý",
-               description = "Đóng quy trình thanh lý. Tài sản sẽ bị đánh dấu LIQUIDATED " +
+               description = "Kế toán/kiểm toán xác nhận hoàn tất. Tài sản sẽ bị đánh dấu LIQUIDATED " +
                              "vĩnh viễn và không thể sửa đổi (BR-05). " +
                              "Tạo biên bản thanh lý (HL-03). " +
                              "Chuyển trạng thái từ APPROVED sang COMPLETED.")

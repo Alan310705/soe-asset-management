@@ -82,9 +82,13 @@ public class SecurityConfig {
                 .requestMatchers("/api/stock/**", "/api/materials/**")
                     .hasAnyRole("SYSTEM_ADMIN", "WAREHOUSE")
 
-                // Handover and liquidation (Your M4 Scope!)
-                .requestMatchers("/api/handovers/**", "/api/liquidations/**")
+                // Handover (Your M4 Scope!)
+                .requestMatchers("/api/handovers/**")
                     .hasAnyRole("SYSTEM_ADMIN", "ASSET_MANAGER", "APPROVING_AUTH")
+
+                // Liquidation — FINANCE_AUDIT completes APPROVED → COMPLETED (HL-02)
+                .requestMatchers("/api/liquidations/**")
+                    .hasAnyRole("SYSTEM_ADMIN", "ASSET_MANAGER", "APPROVING_AUTH", "FINANCE_AUDIT")
 
                 // Reports and audit log (Your M4 Scope!)
                 .requestMatchers(HttpMethod.GET, "/api/reports/**")

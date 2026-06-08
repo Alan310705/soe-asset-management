@@ -12,6 +12,8 @@ import vn.edu.hust.soict.soe.assetmanagement.asset.service.FixedAssetService;
 import vn.edu.hust.soict.soe.assetmanagement.audit.service.AuditLogService;
 import vn.edu.hust.soict.soe.assetmanagement.exception.BusinessRuleException;
 import vn.edu.hust.soict.soe.assetmanagement.exception.ResourceNotFoundException;
+import vn.edu.hust.soict.soe.assetmanagement.liquidation.enums.LiquidationStatus;
+import vn.edu.hust.soict.soe.assetmanagement.liquidation.repository.LiquidationRepository;
 import vn.edu.hust.soict.soe.assetmanagement.handover.dto.CreateHandoverRequest;
 import vn.edu.hust.soict.soe.assetmanagement.handover.dto.HandoverDto;
 import vn.edu.hust.soict.soe.assetmanagement.handover.entity.HandoverRequest;
@@ -80,6 +82,7 @@ import java.util.UUID;
 public class HandoverService {
 
     private final HandoverRepository handoverRepository;
+    private final LiquidationRepository liquidationRepository;
     private final FixedAssetRepository fixedAssetRepository;
     private final FixedAssetService fixedAssetService;      // Cross-module: update asset status/unit
     private final AuditLogService auditLogService;           // Cross-module: write audit log
@@ -92,6 +95,10 @@ public class HandoverService {
      */
     private static final List<HandoverStatus> TERMINAL_STATUSES =
             List.of(HandoverStatus.COMPLETED, HandoverStatus.REJECTED);
+
+    /** Liquidation must reach COMPLETED or REJECTED before the same asset can enter handover. */
+    private static final List<LiquidationStatus> LIQUIDATION_TERMINAL_STATUSES =
+            List.of(LiquidationStatus.COMPLETED, LiquidationStatus.REJECTED);
 
     // ═══════════════════════════════════════════════════════════════════════
     // READ OPERATIONS
@@ -136,9 +143,10 @@ public class HandoverService {
      *
      * VALIDATION STEPS (in order):
      *   1. Asset exists and is not liquidated
-     *   2. fromUnitId matches asset's current managing unit
-     *   3. from_unit_id != to_unit_id  (Rule 3)
-     *   4. No active request already exists for this asset  (Rule 2)
+     *   2. No active liquidation request for the same asset
+     *   3. fromUnitId matches asset's current managing unit
+     *   4. from_unit_id != to_unit_id  (Rule 3)
+     *   5. No active handover request already exists for this asset  (Rule 2)
      *
      * @param request    The validated DTO from the request body.
      * @param initiatedBy The username extracted from the JWT token (never from the body).
@@ -155,6 +163,8 @@ public class HandoverService {
             throw new BusinessRuleException(
                     "Tài sản này đã bị thanh lý rồi. Không thể tạo yêu cầu bàn giao cho tài sản đã thanh lý.");
         }
+
+        ensureNoActiveLiquidation(request.getAssetId());
 
         // ── Validate fromUnitId matches asset's current managing unit ──────
         if (!asset.getManagingUnitId().equals(request.getFromUnitId())) {
@@ -221,6 +231,8 @@ public class HandoverService {
         // ── Validate current state ────────────────────────────────────────
         requireStatus(request, HandoverStatus.DRAFT,
                 "Chỉ có thể nộp yêu cầu đang ở trạng thái DRAFT.");
+
+        ensureAssetEligibleForHandover(request.getAssetId());
 
         // ── Transition ────────────────────────────────────────────────────
         String oldStatus = request.getStatus().name();
@@ -560,6 +572,28 @@ public class HandoverService {
         if (request.getStatus() != expectedStatus) {
             throw new BusinessRuleException(
                     errorMessage + " Trạng thái hiện tại: " + request.getStatus().name());
+        }
+    }
+
+    /**
+     * Ensures the asset is not liquidated and not tied to an active liquidation request.
+     */
+    private void ensureAssetEligibleForHandover(UUID assetId) {
+        var asset = fixedAssetRepository.findById(assetId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Không tìm thấy tài sản với ID: " + assetId));
+        if (asset.getStatus() == AssetStatus.LIQUIDATED) {
+            throw new BusinessRuleException(
+                    "Tài sản này đã bị thanh lý rồi. Không thể tiếp tục quy trình bàn giao.");
+        }
+        ensureNoActiveLiquidation(assetId);
+    }
+
+    private void ensureNoActiveLiquidation(UUID assetId) {
+        if (liquidationRepository.hasActiveRequestForAsset(assetId, LIQUIDATION_TERMINAL_STATUSES)) {
+            throw new BusinessRuleException(
+                    "Tài sản này đang có yêu cầu thanh lý chưa hoàn tất. " +
+                    "Không thể bàn giao cho đến khi quy trình thanh lý kết thúc.");
         }
     }
 
