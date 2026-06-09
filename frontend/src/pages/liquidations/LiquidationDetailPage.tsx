@@ -19,6 +19,7 @@ export default function LiquidationDetailPage() {
   const [item, setItem] = useState<Liquidation | null>(null);
   const isManager = useHasAnyRole([ROLES.ASSET_MANAGER]);
   const isApprover = useHasAnyRole([ROLES.APPROVING_AUTH]);
+  const isFinanceAuditor = useHasAnyRole([ROLES.FINANCE_AUDIT, ROLES.SYSTEM_ADMIN]);
   const currentUsername = useAuthStore((s) => s.user?.username);
   const canApproveAsManager = isManager && item?.initiatedBy !== currentUsername;
 
@@ -80,7 +81,7 @@ export default function LiquidationDetailPage() {
         {item.status === 'DRAFT' && isManager && <Button onClick={() => { liquidationApi.submit(id).then(() => reload()); }}>Nộp duyệt</Button>}
         {item.status === 'PENDING_MANAGER' && canApproveAsManager && <Button type="primary" onClick={() => prompt('Ghi chú quản lý', async (n) => { await liquidationApi.approveManager(id, n); })}>Duyệt (QL)</Button>}
         {item.status === 'PENDING_DIRECTOR' && isApprover && <Button type="primary" onClick={() => prompt('Ghi chú giám đốc', async (n) => { await liquidationApi.approveDirector(id, n); })}>Duyệt (GĐ)</Button>}
-        {item.status === 'APPROVED' && isManager && <Button type="primary" onClick={promptComplete}>Hoàn tất</Button>}
+        {item.status === 'APPROVED' && isFinanceAuditor && <Button type="primary" onClick={promptComplete}>Hoàn tất</Button>}
         {['PENDING_MANAGER', 'PENDING_DIRECTOR'].includes(item.status) && (isManager || isApprover) && (
           <Button danger onClick={() => prompt('Lý do từ chối', async (r) => { await liquidationApi.reject(id, r); }, true)}>Từ chối</Button>
         )}

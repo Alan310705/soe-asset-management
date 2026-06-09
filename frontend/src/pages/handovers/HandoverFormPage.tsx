@@ -2,11 +2,13 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Form, Input, Select, Button, message } from 'antd';
 import { handoverApi } from '../../api/handoverApi';
+import { liquidationApi } from '../../api/liquidationApi';
 import { lookupApi } from '../../api/lookupApi';
 import { assetApi } from '../../api/assetApi';
 import type { LookupItem } from '../../types/common.types';
 import type { FixedAsset } from '../../types/asset.types';
 import PageHeader from '../../components/PageHeader';
+import { filterAssetsAvailableForWorkflow } from '../../utils/workflowAssetFilter';
 
 /*
 A create-only form. 
@@ -22,10 +24,18 @@ export default function HandoverFormPage() {
   const [selectedAsset, setSelectedAsset] = useState<FixedAsset | null>(null);
 
   useEffect(() => {
-    lookupApi.managingUnits().then(setUnits);
-    assetApi.list({ page: 0, size: 100 }).then(r => {
-      const activeAssets = r.content.filter(a => a.status !== 'LIQUIDATED');
-      setAssets(activeAssets);
+    Promise.all([
+      lookupApi.managingUnits(),
+      assetApi.list({ page: 0, size: 100 }),
+      handoverApi.list(0, 500),
+      liquidationApi.list(0, 500),
+    ]).then(([unitList, assetPage, handovers, liquidations]) => {
+      setUnits(unitList);
+      setAssets(filterAssetsAvailableForWorkflow(
+        assetPage.content,
+        handovers.content,
+        liquidations.content,
+      ));
     });
   }, []);
 

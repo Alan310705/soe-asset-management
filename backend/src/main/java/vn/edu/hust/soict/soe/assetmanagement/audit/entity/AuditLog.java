@@ -19,8 +19,7 @@ import java.util.UUID;
  */
 @Entity
 @Table(name = "audit_logs")
-@Getter // Lombok generates getters for all fields
-@Setter // Lombok generates setters, but they should be used with caution since this is an append-only entity
+@Getter // Lombok generates getters for all fields, but no setters to enforce immutability after creation.
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder

@@ -23,7 +23,7 @@ package vn.edu.hust.soict.soe.assetmanagement.liquidation.enums;
  *     ├──[reject]──► REJECTED  (terminal)
  *     ▼
  *   APPROVED
- *     │  (System/admin finalises record: asset set to LIQUIDATED, document generated)
+ *     │  (Finance auditor finalises record: asset set to LIQUIDATED, document generated)
  *     ▼
  *   COMPLETED  (terminal — asset permanently read-only, workflow closed)
  *
