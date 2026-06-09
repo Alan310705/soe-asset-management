@@ -144,43 +144,43 @@ The system defines **5 roles** mapped to Vietnamese SOE organizational structure
 | Assign roles | ✓ | ✗ | ✗ | ✗ | ✗ |
 | **Fixed Assets** |
 | View assets | ✓ | ✓ | ✗ | ✓ | ✓ |
-| Create assets | ✓ | ✓ | ✗ | ✗ | ✗ |
-| Edit assets | ✓ | ✓ | ✗ | ✗ | ✗ |
-| Change asset status | ✓ | ✓ | ✗ | ✗ | ✗ |
+| Create assets | ✗ | ✓ | ✗ | ✗ | ✗ |
+| Edit assets | ✗ | ✓ | ✗ | ✗ | ✗ |
+| Change asset status | ✗ | ✓ | ✗ | ✗ | ✗ |
 | View asset history | ✓ | ✓ | ✗ | ✓ | ✓ |
 | **Consumable Stock** |
 | View materials | ✓ | ✗ | ✓ | ✓ | ✓ |
-| Create materials | ✓ | ✗ | ✓ | ✗ | ✗ |
-| Edit materials | ✓ | ✗ | ✓ | ✗ | ✗ |
-| Stock receipt (nhập kho) | ✓ | ✗ | ✓ | ✗ | ✗ |
-| Stock issue (xuất kho) | ✓ | ✗ | ✓ | ✗ | ✗ |
+| Create materials | ✗ | ✗ | ✓ | ✗ | ✗ |
+| Edit materials | ✗ | ✗ | ✓ | ✗ | ✗ |
+| Stock receipt (nhập kho) | ✗ | ✗ | ✓ | ✗ | ✗ |
+| Stock issue (xuất kho) | ✗ | ✗ | ✓ | ✗ | ✗ |
 | View stock balance | ✓ | ✗ | ✓ | ✓ | ✓ |
 | **Handover Workflow** |
 | View handover requests | ✓ | ✓ | ✗ | ✓ | ✗ |
-| Create handover request | ✓ | ✓ | ✗ | ✗ | ✗ |
-| Submit for approval | ✓ | ✓ | ✗ | ✗ | ✗ |
-| Approve handover (Step 1) | ✓ | ✗ | ✗ | ✓ | ✗ |
-| Confirm receipt (Step 2) | ✓ | ✓ | ✗ | ✓ | ✗ |
-| Complete handover | ✓ | ✗ | ✗ | ✓ | ✗ |
-| Reject handover | ✓ | ✗ | ✗ | ✓ | ✗ |
+| Create handover request | ✗ | ✓ | ✗ | ✗ | ✗ |
+| Submit for approval | ✓ | ✗ | ✗ | ✗ | ✗ |
+| Approve handover (Step 1) | ✗ | ✗ | ✗ | ✓ | ✗ |
+| Confirm receipt (Step 2) | ✗ | ✓ | ✗ | ✓ | ✗ |
+| Complete handover | ✗ | ✗ | ✗ | ✓ | ✗ |
+| Reject handover | ✗ | ✗ | ✗ | ✓ | ✗ |
 | **Liquidation Workflow** |
 | View liquidation requests | ✓ | ✓ | ✗ | ✓ | ✗ |
-| Create liquidation request | ✓ | ✓ | ✗ | ✗ | ✗ |
-| Approve (Manager level) | ✓ | ✓ | ✗ | ✗ | ✗ |
-| Approve (Director level) | ✓ | ✗ | ✗ | ✓ | ✗ |
-| Complete liquidation | ✓ | ✗ | ✗ | ✓ | ✗ |
-| Reject liquidation | ✓ | ✓ | ✗ | ✓ | ✗ |
+| Create liquidation request | ✗ | ✓ | ✗ | ✗ | ✗ |
+| Approve (Manager level) | ✗ | ✗ | ✗ | ✓ | ✗ |
+| Approve (Director level) | ✗ | ✗ | ✗ | ✓ | ✗ |
+| Complete liquidation | ✗ | ✗ | ✗ | ✓ | ✗ |
+| Reject liquidation | ✗ | ✓ | ✗ | ✓ | ✗ |
 | **Reports** |
-| Asset reports | ✓ | ✗ | ✗ | ✓ | ✓ |
-| Stock reports | ✓ | ✗ | ✗ | ✓ | ✓ |
-| Export to Excel/PDF | ✓ | ✗ | ✗ | ✓ | ✓ |
+| Asset reports | ✗ | ✗ | ✗ | ✓ | ✓ |
+| Stock reports | ✗ | ✗ | ✗ | ✓ | ✓ |
+| Export to Excel/PDF | ✗ | ✗ | ✗ | ✓ | ✓ |
 | **Audit Log** |
 | View audit logs | ✓ | ✗ | ✗ | ✗ | ✓ |
 | **Lookup Data** |
 | View reference data | ✓ | ✓ | ✓ | ✓ | ✓ |
 
 **Notes:**
-- `SYSTEM_ADMIN` has full access to all modules.
+- `SYSTEM_ADMIN` has full view access to all modules.
 - **Separation of Duties:** A user who creates a handover/liquidation request cannot approve their own request (enforced at service layer).
 - **Data Scoping:** All roles (except `SYSTEM_ADMIN`) see only data from their assigned Managing Units via `user_units` table filtering.
 

@@ -42,12 +42,12 @@ import java.util.UUID;
  *   5. No business logic — all validation and processing is in HandoverService
  *
  * SECURITY (from SecurityConfig.java):
- *   /api/handovers/** → hasAnyRole('SYSTEM_ADMIN', 'ASSET_MANAGER', 'APPROVING_AUTH')
+ *   /api/handovers/** → hasAnyRole('ASSET_MANAGER', 'APPROVING_AUTH')
  *   Additional @PreAuthorize annotations below restrict specific operations:
  *     - Creating and submitting  → ASSET_MANAGER (the person who manages assets)
  *     - Approving and rejecting  → APPROVING_AUTH (the designated approver)
  *     - Confirming               → ASSET_MANAGER (receiving unit)
- *     - Completing               → SYSTEM_ADMIN or ASSET_MANAGER
+ *     - Completing               → ASSET_MANAGER (receiving unit finalizer)
  *     - Reading                  → all three roles
  *
  * API ENDPOINTS:

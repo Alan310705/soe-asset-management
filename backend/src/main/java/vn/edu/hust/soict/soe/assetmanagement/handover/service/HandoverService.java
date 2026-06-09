@@ -161,7 +161,7 @@ public class HandoverService {
                         "Không tìm thấy tài sản với ID: " + request.getAssetId()));
         if (asset.getStatus() == AssetStatus.LIQUIDATED) {
             throw new BusinessRuleException(
-                    "Tài sản này đã bị thanh lý rồi. Không thể tạo yêu cầu bàn giao cho tài sản đã thanh lý.");
+                    "Tài sản này đã bị thanh lý. Không thể tạo yêu cầu bàn giao cho tài sản đã thanh lý.");
         }
 
         ensureNoActiveLiquidation(request.getAssetId());

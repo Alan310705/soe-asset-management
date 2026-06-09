@@ -6,6 +6,9 @@ import PageHeader from '../../components/PageHeader';
 import { formatCurrency } from '../../utils/formatCurrency';
 import { ROLES, useHasAnyRole } from '../../utils/roleGuard';
 
+/*
+Read-only paginated table of warehouse materials.
+*/
 export default function MaterialListPage() {
   const canCreate = useHasAnyRole([ROLES.WAREHOUSE]);
   const [data, setData] = useState<Material[]>([]);

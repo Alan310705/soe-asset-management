@@ -8,6 +8,11 @@ import type { Material } from '../../api/stockApi';
 import PageHeader from '../../components/PageHeader';
 import { ROLES, useHasAnyRole } from '../../utils/roleGuard';
 
+/*
+Records materials going out of the warehouse to a requesting department. 
+Captures which organizational unit is taking the materials and who requested it. 
+On submit it calls stockApi.issue() and also redirects to the balance page.
+*/
 export default function StockIssuePage() {
   const navigate = useNavigate();
   const canAccess = useHasAnyRole([ROLES.WAREHOUSE]);
